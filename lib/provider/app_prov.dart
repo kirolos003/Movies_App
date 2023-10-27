@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:movies_app/Network/local/cache_helper.dart';
 import 'package:movies_app/Network/remote/dio_helper.dart';
@@ -23,23 +24,26 @@ class AppProvider extends ChangeNotifier {
 
   List<dynamic> shows = [];
 
-  void getShows() {
-    DioHelper.getData(
+  Future<void> getShows() async {
+     await DioHelper.getData(
         url: 'movie/popular',
         query: {
           'api_key': '026d58483e3ff0e05eb2e94b38125ce5',
         }
+
     )?.then((value) {
       shows = value?.data['results'];
+      // print(shows);
     }).catchError((error) {
       print(error.toString());
     });
+    notifyListeners();
   }
 
   List<dynamic> newReleases = [];
 
-  void getNewReleases() {
-    DioHelper.getData(
+  Future<void> getNewReleases() async {
+  await DioHelper.getData(
         url: 'movie/upcoming',
         query: {
           'api_key': '026d58483e3ff0e05eb2e94b38125ce5',
@@ -49,12 +53,13 @@ class AppProvider extends ChangeNotifier {
     }).catchError((error) {
       print(error.toString());
     });
+  notifyListeners();
   }
 
   List<dynamic> recommended = [];
 
-  void getRecommended() {
-    DioHelper.getData(
+  Future<void> getRecommended() async {
+  await  DioHelper.getData(
         url: 'movie/top_rated',
         query: {
           'api_key': '026d58483e3ff0e05eb2e94b38125ce5',
@@ -64,6 +69,7 @@ class AppProvider extends ChangeNotifier {
     }).catchError((error) {
       print(error.toString());
     });
+  notifyListeners();
   }
 
   List<dynamic> favorites = [];
@@ -80,8 +86,9 @@ class AppProvider extends ChangeNotifier {
 
   List<dynamic> search = [];
 
-  void getSearch(String text) {
-    DioHelper.getData(
+  Future<void> getSearch(String text) async {
+    print("query: $text");
+   await DioHelper.getData(
         url: 'search/movie',
         query: {
           'api_key': '026d58483e3ff0e05eb2e94b38125ce5',
@@ -92,6 +99,7 @@ class AppProvider extends ChangeNotifier {
     }).catchError((error) {
       print(error.toString());
     });
+   notifyListeners();
   }
 
   List<dynamic> categories = [];
@@ -104,9 +112,28 @@ class AppProvider extends ChangeNotifier {
         }
     )?.then((value) {
       categories = value?.data['genres'];
-      print(categories);
     }).catchError((error) {
       print(error.toString());
     });
   }
+
+  List<dynamic> browse = [];
+
+  Future<void> getMoviesByCategories(int id) async {
+    print("id: $id");
+   await DioHelper.getData(
+        url: 'discover/movie',
+        query: {
+          'api_key': '026d58483e3ff0e05eb2e94b38125ce5',
+          'with_genres' : id
+        }
+    )?.then((value) {
+      browse = value?.data['results'];
+      print(browse);
+    }).catchError((error) {
+      print(error.toString());
+    });
+   notifyListeners();
+  }
+//  https://api.themoviedb.org/3/discover/movie?api_key=026d58483e3ff0e05eb2e94b38125ce5&genre_ids=53
 }

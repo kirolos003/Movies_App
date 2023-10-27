@@ -8,22 +8,31 @@ class WatchListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.separated(
-            separatorBuilder: (context, index) =>
-                const Divider(color: Color(0xff707070)),
-            itemBuilder: (context, index) => FavoritesItemBuilder(
-                provider.favorites[index],),
-            itemCount: provider.favorites.length,
-          ),
-        )
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Watch List" , style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w800,
+            fontSize: 30
+          ),),
+          Expanded(
+            child: ListView.separated(
+              separatorBuilder: (context, index) =>
+                  const Divider(color: Color(0xff707070)),
+              itemBuilder: (context, index) => favoritesItemBuilder(
+                  provider.favorites[index],),
+              itemCount: provider.favorites.length,
+            ),
+          )
+        ],
+      ),
     );
   }
 
-  Widget FavoritesItemBuilder(String id) => Padding(
+  Widget favoritesItemBuilder(String id) => Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
@@ -36,24 +45,24 @@ class WatchListScreen extends StatelessWidget {
             const SizedBox(
               width: 20,
             ),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "",
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     height: 5,
                   ),
                   Text(
                     "",
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.w500,

@@ -4,17 +4,27 @@ import 'package:movies_app/models/shows/shows.dart';
 import 'package:movies_app/provider/app_prov.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
-  var onBoardingController = PageController();
-  bool? isLast = false;
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  var onBoardingController = PageController();
+
+  bool? isLast = false;
+@override
+  void initState() {
+    super.initState();
+    Provider.of<AppProvider>(context, listen: false).getShows();
+    Provider.of<AppProvider>(context, listen: false).getNewReleases();
+    Provider.of<AppProvider>(context, listen: false).getRecommended();
+  }
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
-    provider.getShows();
-    provider.getNewReleases();
-    provider.getRecommended();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,

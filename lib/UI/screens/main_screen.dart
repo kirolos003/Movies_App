@@ -3,12 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:movies_app/provider/app_prov.dart';
 import 'package:provider/provider.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<AppProvider>(context, listen: false).getShows();
+    Provider.of<AppProvider>(context, listen: false).getNewReleases();
+    Provider.of<AppProvider>(context, listen: false).getRecommended();
+  }
+  @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
+    print("build shows");
     return Container(
       child: Column(
         children: [
@@ -210,5 +223,4 @@ class MainScreen extends StatelessWidget {
       ),
     ),
   );
-
 }

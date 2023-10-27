@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:movies_app/shared/components.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/app_prov.dart';
+import 'category_details_screen.dart';
 
 class BrowseScreen extends StatelessWidget {
   const BrowseScreen({Key? key}) : super(key: key);
@@ -35,7 +37,7 @@ class BrowseScreen extends StatelessWidget {
                     crossAxisSpacing: 30
                   ),
                   itemCount: provider.categories.length,
-                  itemBuilder: (context , index) => BuildCategoryItem(provider.categories[index]['name'])
+                  itemBuilder: (context , index) => buildCategoryItem(provider.categories[index]['name'] , provider.categories[index]['id'], context)
               ),
             ),
           ],
@@ -43,32 +45,37 @@ class BrowseScreen extends StatelessWidget {
       ),
     );
   }
-  Widget BuildCategoryItem(String category) => Container(
-      decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20),
-      ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Stack(
-        children: [
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.srcOver),
-            child: const Image(
-              image: AssetImage("assets/images/back.png"),
-              width: double.infinity,
-              height: 120,
-              fit: BoxFit.cover,
+  Widget buildCategoryItem(String category , int id ,  BuildContext context) => InkWell(
+    onTap: (){
+      navigateTo(context, CategoryDetailsScreen(id));
+    },
+    child: Container(
+        decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Stack(
+          children: [
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.srcOver),
+              child: const Image(
+                image: AssetImage("assets/images/back.png"),
+                width: double.infinity,
+                height: 120,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          Center(
-            child: Text(
-              "$category" , style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 20
-            ),),
-          )
-        ],
+            Center(
+              child: Text(
+                category , style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 20
+              ),),
+            )
+          ],
+        ),
       ),
     ),
   );
