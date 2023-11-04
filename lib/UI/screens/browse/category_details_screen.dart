@@ -151,7 +151,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "$title",
+                title,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17,
@@ -162,7 +162,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                 height: 5,
               ),
               Text(
-                "$date",
+                date,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 17,

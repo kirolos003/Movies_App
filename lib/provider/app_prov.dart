@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-import 'package:movies_app/Network/local/cache_helper.dart';
 import 'package:movies_app/Network/remote/dio_helper.dart';
 import 'package:movies_app/UI/screens/browse/browse_screen.dart';
 import 'package:movies_app/UI/screens/main_screen.dart';
@@ -11,7 +9,7 @@ class AppProvider extends ChangeNotifier {
 
   int currentIndex = 0;
   List<Widget> bottomScreens = [
-    MainScreen(),
+    const MainScreen(),
     SearchScreen(),
     const BrowseScreen(),
     const WatchListScreen(),
@@ -77,8 +75,12 @@ class AppProvider extends ChangeNotifier {
   void changeFavorites(int id, int index) {
     if (favorites.contains(id)) {
       favorites.remove(id);
+      // FirebaseFirestore.instance.collection('users').doc(user.uid).collection('favorites').doc(id.toString()).delete();
     } else {
       favorites.add(id);
+      // FirebaseFirestore.instance.collection('users').doc(user.uid).collection('favorites').doc(id.toString()).set({
+      //   'id': id,
+      // });
     }
     notifyListeners();
     print(favorites);
@@ -92,7 +94,7 @@ class AppProvider extends ChangeNotifier {
         url: 'search/movie',
         query: {
           'api_key': '026d58483e3ff0e05eb2e94b38125ce5',
-          'query' : '$text'
+          'query' : text
         }
     )?.then((value) {
       search = value?.data['results'];
@@ -135,5 +137,4 @@ class AppProvider extends ChangeNotifier {
     });
    notifyListeners();
   }
-//  https://api.themoviedb.org/3/discover/movie?api_key=026d58483e3ff0e05eb2e94b38125ce5&genre_ids=53
 }
