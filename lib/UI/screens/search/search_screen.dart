@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../provider/app_prov.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -26,8 +25,6 @@ class _SearchScreenState extends State<SearchScreen> {
         separatorBuilder: (context, index) =>
             const Divider(color: Color(0xff707070)),
         itemBuilder: (context, index) {
-          // print(provider.search[index]['poster_path']);
-          // print(provider.search[index]['title']);
           return SearchItemBuilder(
               provider.search[index]['poster_path'],
               provider.search[index]['title'],

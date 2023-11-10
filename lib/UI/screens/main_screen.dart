@@ -17,11 +17,12 @@ class _MainScreenState extends State<MainScreen> {
     Provider.of<AppProvider>(context, listen: false).getShows();
     Provider.of<AppProvider>(context, listen: false).getNewReleases();
     Provider.of<AppProvider>(context, listen: false).getRecommended();
+    Provider.of<AppProvider>(context, listen: false).getFavorites();
+
   }
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
-    print("build shows");
     return Container(
       child: Column(
         children: [
@@ -81,7 +82,7 @@ class _MainScreenState extends State<MainScreen> {
                       itemBuilder: (context, index) {
                         return Consumer<AppProvider>(
                           builder: (context, appProvider, child) {
-                            return BuildNewReleasesItem(appProvider, appProvider.newReleases[index]['poster_path'] , appProvider.newReleases[index]['id'] , index);
+                            return BuildNewReleasesItem(appProvider, appProvider.newReleases[index]['poster_path'] , appProvider.newReleases[index]['original_title'] , appProvider.newReleases[index]['id'] , index);
                           },
                         );
                       }
@@ -117,7 +118,7 @@ class _MainScreenState extends State<MainScreen> {
                       itemBuilder: (context, index) {
                         return Consumer<AppProvider>(
                           builder: (context, appProvider, child) {
-                            return BuildRecommendedItem(appProvider , appProvider.recommended[index]['poster_path'] , appProvider.recommended[index]['id'] , index , appProvider.recommended[index]['vote_average'] , appProvider.recommended[index]['original_title'] , appProvider.recommended[index]['release_date']);
+                            return BuildRecommendedItem(appProvider , appProvider.recommended[index]['poster_path'] , appProvider.recommended[index]['id'] , index , appProvider.recommended[index]['original_title']);
                           },
                         );
                       }
@@ -131,7 +132,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget BuildNewReleasesItem(AppProvider provider, String path , int id , int index ) => Container(
+  Widget BuildNewReleasesItem(AppProvider provider, String path , String title , int id , int index ) => Container(
     margin: const EdgeInsets.all(10),
     child: Stack(
       children: [
@@ -153,7 +154,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             child: IconButton(
                 onPressed: () {
-                  provider.changeFavorites(id , index);
+                  provider.changeFavorites(id , index , path , title);
                 },
                 icon: provider.favorites.contains(id) ? const Icon(Icons.check , color: Colors.white) : const Icon(Icons.add , color: Colors.white)
             ),
@@ -163,7 +164,7 @@ class _MainScreenState extends State<MainScreen> {
     ),
   );
 
-  Widget BuildRecommendedItem(AppProvider provider, String path, int id, int index, double vote, String name , String date ) => Container(
+  Widget BuildRecommendedItem(AppProvider provider, String path, int id, int index , String title ) => Container(
     margin: const EdgeInsets.all(10),
     child: SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -188,7 +189,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     child: IconButton(
                       onPressed: () {
-                        provider.changeFavorites(id, index);
+                        provider.changeFavorites(id, index , path , title);
                       },
                       icon: provider.favorites.contains(id) ? const Icon(Icons.check, color: Colors.white) : const Icon(Icons.add, color: Colors.white),
                     ),
@@ -197,24 +198,20 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
+          // ignore: prefer_const_constructors
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Icon(Icons.star, color: Colors.orange),
-              const SizedBox(width: 5),
-              Text("$vote" ,
+            children: const [
+              Icon(Icons.star, color: Colors.orange),
+              SizedBox(width: 5),
+              Text("3.1" ,
                 textAlign: TextAlign.start,
-                style: const TextStyle(
+                style: TextStyle(
                     color: Colors.white
                 ),),
             ],
           ),
-          Text('$name' ,
-            textAlign: TextAlign.start,
-            style: const TextStyle(
-                color: Colors.white
-            ),),
-          Text('$date' ,
+          Text('$title',
             textAlign: TextAlign.start,
             style: const TextStyle(
                 color: Colors.white

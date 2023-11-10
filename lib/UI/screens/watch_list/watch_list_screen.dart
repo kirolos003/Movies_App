@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:movies_app/provider/app_prov.dart';
 import 'package:provider/provider.dart';
 
-class WatchListScreen extends StatelessWidget {
+class WatchListScreen extends StatefulWidget {
   const WatchListScreen({Key? key}) : super(key: key);
 
+  @override
+  State<WatchListScreen> createState() => _WatchListScreenState();
+}
+
+class _WatchListScreenState extends State<WatchListScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<AppProvider>(context, listen: false).getFavorites();
+  }
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
@@ -23,8 +33,8 @@ class WatchListScreen extends StatelessWidget {
               separatorBuilder: (context, index) =>
                   const Divider(color: Color(0xff707070)),
               itemBuilder: (context, index) => favoritesItemBuilder(
-                  provider.favorites[index],),
-              itemCount: provider.favorites.length,
+                  provider.favoritesFromFirebase[index]['poster_path'], provider.favoritesFromFirebase[index]['title']),
+              itemCount: provider.favoritesFromFirebase.length,
             ),
           )
         ],
@@ -32,12 +42,12 @@ class WatchListScreen extends StatelessWidget {
     );
   }
 
-  Widget favoritesItemBuilder(String id) => Padding(
+  Widget favoritesItemBuilder(String path , String title) => Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
             Image.network(
-              'https://image.tmdb.org/t/p/w500/',
+              'https://image.tmdb.org/t/p/w500/$path',
               width: 140,
               height: 89,
               fit: BoxFit.cover,
@@ -45,22 +55,22 @@ class WatchListScreen extends StatelessWidget {
             const SizedBox(
               width: 20,
             ),
-            const Expanded(
+             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "",
-                    style: TextStyle(
+                    title,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5,
                   ),
-                  Text(
+                  const Text(
                     "",
                     style: TextStyle(
                       color: Colors.white,

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:movies_app/Network/remote/dio_helper.dart';
 import 'package:movies_app/UI/screens/browse/browse_screen.dart';
@@ -31,7 +32,6 @@ class AppProvider extends ChangeNotifier {
 
     )?.then((value) {
       shows = value?.data['results'];
-      // print(shows);
     }).catchError((error) {
       print(error.toString());
     });
@@ -72,18 +72,35 @@ class AppProvider extends ChangeNotifier {
 
   List<dynamic> favorites = [];
 
-  void changeFavorites(int id, int index) {
+  List<dynamic> favoritesFromFirebase = [];
+
+  void changeFavorites(int id, int index , String poster_path , String title) {
     if (favorites.contains(id)) {
       favorites.remove(id);
-      // FirebaseFirestore.instance.collection('users').doc(user.uid).collection('favorites').doc(id.toString()).delete();
+      FirebaseFirestore.instance.collection('favorites').doc(id.toString()).delete();
     } else {
       favorites.add(id);
-      // FirebaseFirestore.instance.collection('users').doc(user.uid).collection('favorites').doc(id.toString()).set({
-      //   'id': id,
-      // });
+      FirebaseFirestore.instance.collection('favorites').doc(id.toString()).set({
+        'id': id,
+        'poster_path': poster_path,
+        'title': title,
+      });
     }
     notifyListeners();
     print(favorites);
+  }
+
+  void getFavorites() {
+    print("got here 1");
+    FirebaseFirestore.instance.collection('favorites').get().then((value) {
+      favoritesFromFirebase = value.docs.map((e) => {
+        'id': e.data()['id'],
+        'poster_path': e.data()['poster_path'],
+        'title': e.data()['title'],
+      }).toList();
+      favorites = value.docs.map((e) => e.data()['id']).toList();
+      notifyListeners();
+    });
   }
 
   List<dynamic> search = [];
