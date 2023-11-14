@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:movies_app/UI/screens/movie_details/movie_details_screen.dart';
 import 'package:movies_app/provider/app_prov.dart';
+import 'package:movies_app/shared/components.dart';
 import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
@@ -32,12 +34,17 @@ class _MainScreenState extends State<MainScreen> {
                 height: 200,
                 child: CarouselSlider(
                   items: provider.shows
-                      .map((e) => Image(
+                      .map((e) => InkWell(
+                    onTap: () {
+                      navigateTo(context, MovieDetailsScreen(movieId:e['id']));
+                    },
+                        child: Image(
                     image: NetworkImage(
-                        'https://image.tmdb.org/t/p/w500/${e['poster_path']}'),
+                          'https://image.tmdb.org/t/p/w500/${e['poster_path']}'),
                     width: double.infinity,
                     fit: BoxFit.cover,
-                  ))
+                  ),
+                      ))
                       .toList(),
                   options: CarouselOptions(
                     height: 200,
@@ -132,91 +139,101 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget BuildNewReleasesItem(AppProvider provider, String path , String title , int id , int index ) => Container(
-    margin: const EdgeInsets.all(10),
-    child: Stack(
-      children: [
-        Image(
-          width: 100,
-          image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
-          // fit: BoxFit.cover,
-        ),
-        Positioned(
-          top: 1,
-          left: 1,
-          child: Container(
-            decoration: BoxDecoration(
-              color: provider.favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(5),
-                bottomRight: Radius.circular(5),
+  Widget BuildNewReleasesItem(AppProvider provider, String path , String title , int id , int index ) => InkWell(
+    onTap: () {
+      navigateTo(context, MovieDetailsScreen(movieId:id));
+    },
+    child: Container(
+      margin: const EdgeInsets.all(10),
+      child: Stack(
+        children: [
+          Image(
+            width: 100,
+            image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
+            // fit: BoxFit.cover,
+          ),
+          Positioned(
+            top: 1,
+            left: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: provider.favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(5),
+                  bottomRight: Radius.circular(5),
+                ),
+              ),
+              child: IconButton(
+                  onPressed: () {
+                    provider.changeFavorites(id , index , path , title);
+                  },
+                  icon: provider.favorites.contains(id) ? const Icon(Icons.check , color: Colors.white) : const Icon(Icons.add , color: Colors.white)
               ),
             ),
-            child: IconButton(
-                onPressed: () {
-                  provider.changeFavorites(id , index , path , title);
-                },
-                icon: provider.favorites.contains(id) ? const Icon(Icons.check , color: Colors.white) : const Icon(Icons.add , color: Colors.white)
-            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 
-  Widget BuildRecommendedItem(AppProvider provider, String path, int id, int index , String title ) => Container(
-    margin: const EdgeInsets.all(10),
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Image(
-                  image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
-                ),
-                Positioned(
-                  top: 1,
-                  left: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: provider.favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(5),
-                        bottomRight: Radius.circular(5),
+  Widget BuildRecommendedItem(AppProvider provider, String path, int id, int index , String title ) => InkWell(
+    onTap: () {
+      navigateTo(context, MovieDetailsScreen(movieId:id));
+    },
+    child: Container(
+      margin: const EdgeInsets.all(10),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Image(
+                    image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
+                  ),
+                  Positioned(
+                    top: 1,
+                    left: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: provider.favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(5),
+                          bottomRight: Radius.circular(5),
+                        ),
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          provider.changeFavorites(id, index , path , title);
+                        },
+                        icon: provider.favorites.contains(id) ? const Icon(Icons.check, color: Colors.white) : const Icon(Icons.add, color: Colors.white),
                       ),
                     ),
-                    child: IconButton(
-                      onPressed: () {
-                        provider.changeFavorites(id, index , path , title);
-                      },
-                      icon: provider.favorites.contains(id) ? const Icon(Icons.check, color: Colors.white) : const Icon(Icons.add, color: Colors.white),
-                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
+            // ignore: prefer_const_constructors
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Icon(Icons.star, color: Colors.orange),
+                SizedBox(width: 5),
+                Text("3.1" ,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      color: Colors.white
+                  ),),
               ],
             ),
-          ),
-          // ignore: prefer_const_constructors
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              Icon(Icons.star, color: Colors.orange),
-              SizedBox(width: 5),
-              Text("3.1" ,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Colors.white
-                ),),
-            ],
-          ),
-          Text('$title',
-            textAlign: TextAlign.start,
-            style: const TextStyle(
-                color: Colors.white
-            ),),
-        ],
+            Text('$title',
+              textAlign: TextAlign.start,
+              style: const TextStyle(
+                  color: Colors.white
+              ),),
+          ],
+        ),
       ),
     ),
   );

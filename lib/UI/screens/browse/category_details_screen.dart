@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movies_app/UI/screens/movie_details/movie_details_screen.dart';
+import 'package:movies_app/shared/components.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/app_prov.dart';
 
@@ -120,6 +122,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
               child: ListView.separated(
                 separatorBuilder: (context, index) => const Divider(color: Color(0xff707070)),
                 itemBuilder: (context, index) => SearchItemBuilder(
+                    provider.browse[index]['id'],
                     provider.browse[index]['poster_path'],
                     provider.browse[index]['title'],
                     provider.browse[index]['release_date']
@@ -133,46 +136,51 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
     );
   }
 
-  Widget SearchItemBuilder(String image, String title, String date) => Padding(
-    padding: const EdgeInsets.all(10.0),
-    child: Row(
-      children: [
-        Image.network(
-          'https://image.tmdb.org/t/p/w500/$image',
-          width: 140,
-          height: 89,
-          fit: BoxFit.cover,
-        ),
-        const SizedBox(
-          width: 20,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                date,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+  Widget SearchItemBuilder(int id , String image, String title, String date) => InkWell(
+    onTap: () {
+      navigateTo(context, MovieDetailsScreen(movieId:id));
+    },
+    child: Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Image.network(
+            'https://image.tmdb.org/t/p/w500/$image',
+            width: 140,
+            height: 89,
+            fit: BoxFit.cover,
           ),
-        ),
-      ],
+          const SizedBox(
+            width: 20,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  date,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

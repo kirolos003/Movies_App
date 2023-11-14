@@ -91,7 +91,6 @@ class AppProvider extends ChangeNotifier {
   }
 
   void getFavorites() {
-    print("got here 1");
     FirebaseFirestore.instance.collection('favorites').get().then((value) {
       favoritesFromFirebase = value.docs.map((e) => {
         'id': e.data()['id'],
@@ -153,5 +152,41 @@ class AppProvider extends ChangeNotifier {
       print(error.toString());
     });
    notifyListeners();
+  }
+
+  late dynamic movieDetail;
+  List<dynamic> genres = [];
+
+  Future<void> getMovieDetails(int movieId) async {
+    await DioHelper.getData(
+        url: 'movie/$movieId',
+        query: {
+          'api_key': '026d58483e3ff0e05eb2e94b38125ce5',
+        }
+    )?.then((value) {
+      movieDetail = value?.data;
+      genres = value?.data['genres'];
+      print(movieDetail);
+    }).catchError((error) {
+      print(error.toString());
+    });
+    notifyListeners();
+  }
+
+  List<dynamic> moreLikeThis = [];
+
+  Future<void> getMoreLikeThis(int movieId) async {
+    await DioHelper.getData(
+        url: 'movie/$movieId/similar',
+        query: {
+          'api_key': '026d58483e3ff0e05eb2e94b38125ce5',
+        }
+    )?.then((value) {
+      moreLikeThis = value?.data['results'];
+      print(movieDetail);
+    }).catchError((error) {
+      print(error.toString());
+    });
+    notifyListeners();
   }
 }

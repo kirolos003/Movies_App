@@ -33,7 +33,7 @@ class _WatchListScreenState extends State<WatchListScreen> {
               separatorBuilder: (context, index) =>
                   const Divider(color: Color(0xff707070)),
               itemBuilder: (context, index) => favoritesItemBuilder(
-                  provider.favoritesFromFirebase[index]['poster_path'], provider.favoritesFromFirebase[index]['title']),
+                  provider.favoritesFromFirebase[index]['poster_path'], provider.favoritesFromFirebase[index]['title'] , provider.favoritesFromFirebase[index]['id'] , index),
               itemCount: provider.favoritesFromFirebase.length,
             ),
           )
@@ -42,15 +42,40 @@ class _WatchListScreenState extends State<WatchListScreen> {
     );
   }
 
-  Widget favoritesItemBuilder(String path , String title) => Padding(
-        padding: const EdgeInsets.all(10.0),
+  Widget favoritesItemBuilder(String path , String title , int id , int index) => Padding(
+  padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
-            Image.network(
-              'https://image.tmdb.org/t/p/w500/$path',
-              width: 140,
-              height: 89,
-              fit: BoxFit.cover,
+            Stack(
+              children: [
+                Image(
+                  image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
+                  width: 100,
+                  height: 150,
+                ),
+                Positioned(
+                  top: 1,
+                  left: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Provider.of<AppProvider>(context).favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(5),
+                        bottomRight: Radius.circular(5),
+                      ),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        Provider.of<AppProvider>(context).changeFavorites(id, index , path , title);
+                        setState(() {
+
+                        });
+                      },
+                      icon: Provider.of<AppProvider>(context).favorites.contains(id) ? const Icon(Icons.check, color: Colors.white) : const Icon(Icons.add, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               width: 20,
