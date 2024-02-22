@@ -181,7 +181,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                             itemBuilder: (context, index) {
                               return Consumer<AppProvider>(
                                 builder: (context, appProvider, child) {
-                                  return BuildMoreLikeThisItem(context , appProvider , appProvider.moreLikeThis[index]['poster_path'] , appProvider.moreLikeThis[index]['id'] , index , appProvider.moreLikeThis[index]['original_title']);
+                                  return BuildMoreLikeThisItem(widget,context , appProvider , appProvider.moreLikeThis[index]['poster_path'] , appProvider.moreLikeThis[index]['id'] , index , appProvider.moreLikeThis[index]['original_title']);
                                 },
                               );
                             }
@@ -220,65 +220,89 @@ Widget BuildGeneresItem(String type) => Container(
       ),
     );
 
-Widget BuildMoreLikeThisItem(BuildContext context , AppProvider provider, String path, int id, int index , String title ) => InkWell(
-  onTap: () {
-    navigateTo(context, MovieDetailsScreen(movieId:id));
-  },
-  child:   Container(
-    margin: const EdgeInsets.all(10),
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Image(
-                  image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
-                ),
-                Positioned(
-                  top: 1,
-                  left: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: provider.favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(5),
-                        bottomRight: Radius.circular(5),
+Widget BuildMoreLikeThisItem(
+    MovieDetailsScreen widget,
+    BuildContext context,
+    AppProvider provider,
+    String? path,
+    int id,
+    int index,
+    String title,
+    ) {
+  return InkWell(
+    onTap: () async {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (build) => MovieDetailsScreen(movieId: id),
+        ),
+      );
+      provider.getMovieDetails(widget.movieId);
+    },
+    child: Container(
+      margin: const EdgeInsets.all(10),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  if (path != null)
+                    Image(
+                      image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
+                    ),
+                  Positioned(
+                    top: 1,
+                    left: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: provider.favorites.contains(id)
+                            ? Colors.orangeAccent.withOpacity(0.6)
+                            : Colors.black.withOpacity(0.5),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(5),
+                          bottomRight: Radius.circular(5),
+                        ),
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          provider.changeFavorites(id, index, path ?? '', title);
+                        },
+                        icon: provider.favorites.contains(id)
+                            ? const Icon(Icons.check, color: Colors.white)
+                            : const Icon(Icons.add, color: Colors.white),
                       ),
                     ),
-                    child: IconButton(
-                      onPressed: () {
-                        provider.changeFavorites(id, index , path , title);
-                      },
-                      icon: provider.favorites.contains(id) ? const Icon(Icons.check, color: Colors.white) : const Icon(Icons.add, color: Colors.white),
-                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Icon(Icons.star, color: Colors.orange),
+                SizedBox(width: 5),
+                Text(
+                  "3.1",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
-          ),
-          // ignore: prefer_const_constructors
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const [
-              Icon(Icons.star, color: Colors.orange),
-              SizedBox(width: 5),
-              Text("3.1" ,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Colors.white
-                ),),
-            ],
-          ),
-          Text('$title',
-            textAlign: TextAlign.start,
-            style: const TextStyle(
-                color: Colors.white
-            ),),
-        ],
+            Text(
+              title,
+              textAlign: TextAlign.start,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     ),
-  ),
-);
+  );
+}
 

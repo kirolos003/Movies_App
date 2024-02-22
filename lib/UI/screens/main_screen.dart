@@ -25,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
-    return Container(
+    return SingleChildScrollView(
       child: Column(
         children: [
           Stack(
@@ -102,7 +102,7 @@ class _MainScreenState extends State<MainScreen> {
             height: 40,
           ),
           Container(
-            height: 250,
+            height: 180,
             color: const Color(0xff292b29),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,12 +120,12 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: provider.newReleases.length,
+                      itemCount: provider.recommended.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return Consumer<AppProvider>(
                           builder: (context, appProvider, child) {
-                            return BuildRecommendedItem(appProvider , appProvider.recommended[index]['poster_path'] , appProvider.recommended[index]['id'] , index , appProvider.recommended[index]['original_title']);
+                            return BuildNewReleasesItem(appProvider, appProvider.recommended[index]['poster_path'] , appProvider.recommended[index]['original_title'] , appProvider.recommended[index]['id'] , index);
                           },
                         );
                       }
@@ -145,32 +145,44 @@ class _MainScreenState extends State<MainScreen> {
     },
     child: Container(
       margin: const EdgeInsets.all(10),
-      child: Stack(
+      child: Column(
         children: [
-          Image(
-            width: 100,
-            image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
-            // fit: BoxFit.cover,
-          ),
-          Positioned(
-            top: 1,
-            left: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: provider.favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(5),
-                  bottomRight: Radius.circular(5),
+          Expanded(
+            child: Stack(
+              children: [
+                Image(
+                  width: 100,
+                  image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
+                  // fit: BoxFit.cover,
                 ),
-              ),
-              child: IconButton(
-                  onPressed: () {
-                    provider.changeFavorites(id , index , path , title);
-                  },
-                  icon: provider.favorites.contains(id) ? const Icon(Icons.check , color: Colors.white) : const Icon(Icons.add , color: Colors.white)
-              ),
+                Positioned(
+                  top: 1,
+                  left: 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: provider.favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(5),
+                        bottomRight: Radius.circular(5),
+                      ),
+                    ),
+                    child: IconButton(
+                        onPressed: () {
+                          provider.changeFavorites(id , index , path , title);
+                        },
+                        icon: provider.favorites.contains(id) ? const Icon(Icons.check , color: Colors.white) : const Icon(Icons.add , color: Colors.white)
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+          SizedBox(
+            height: 5,
+          ),
+          Text('$title', style: TextStyle(
+            color: Colors.white
+          ),)
         ],
       ),
     ),
@@ -193,14 +205,16 @@ class _MainScreenState extends State<MainScreen> {
                     image: NetworkImage('https://image.tmdb.org/t/p/w500/$path'),
                   ),
                   Positioned(
-                    top: 1,
-                    left: 1,
+                    top: 0,
+                    left: 0,
                     child: Container(
+                      width: 3,
+                      height: 3,
                       decoration: BoxDecoration(
                         color: provider.favorites.contains(id) ? Colors.orangeAccent.withOpacity(0.6) : Colors.black.withOpacity(0.5),
                         borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(5),
-                          bottomRight: Radius.circular(5),
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
                         ),
                       ),
                       child: IconButton(

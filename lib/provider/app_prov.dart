@@ -78,6 +78,7 @@ class AppProvider extends ChangeNotifier {
     if (favorites.contains(id)) {
       favorites.remove(id);
       FirebaseFirestore.instance.collection('favorites').doc(id.toString()).delete();
+      notifyListeners();
     } else {
       favorites.add(id);
       FirebaseFirestore.instance.collection('favorites').doc(id.toString()).set({
@@ -85,6 +86,7 @@ class AppProvider extends ChangeNotifier {
         'poster_path': poster_path,
         'title': title,
       });
+      notifyListeners();
     }
     notifyListeners();
     print(favorites);
@@ -183,7 +185,6 @@ class AppProvider extends ChangeNotifier {
         }
     )?.then((value) {
       moreLikeThis = value?.data['results'];
-      print(movieDetail);
     }).catchError((error) {
       print(error.toString());
     });
